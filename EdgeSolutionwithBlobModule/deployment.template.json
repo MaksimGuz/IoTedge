@@ -100,8 +100,8 @@
           "mongodbmodule": {
             "type": "docker",
             "settings": {
-                "image": "mongo:latest",
-                "createOptions": "{\"HostConfig\":{\"Binds\":[\"/data/db\"],\"PortBindings\":{\"27017/tcp\":[{\"HostPort\":\"27017\"}]}}}"
+              "image": "mongo:latest",
+              "createOptions": "{\"HostConfig\":{\"Binds\":[\"/data/db\"],\"PortBindings\":{\"27017/tcp\":[{\"HostPort\":\"27017\"}]}}}"
             },
             "version": "1.0",
             "status": "running",
@@ -120,12 +120,22 @@
           "redis": {
             "type": "docker",
             "settings": {
-                "image": "redis:latest",
-                "createOptions": "{\"HostConfig\":{\"Binds\":[\"/data/db\"],\"PortBindings\":{\"6379/tcp\":[{\"HostPort\":\"6379\"}]}}}"
+              "image": "redis:latest",
+              "createOptions": "{\"HostConfig\":{\"Binds\":[\"/data/db\"],\"PortBindings\":{\"6379/tcp\":[{\"HostPort\":\"6379\"}]}}}"
             },
             "status": "running",
             "restartPolicy": "always",
             "version": "1.0"
+          },
+          "UpstreamFromStorages": {
+            "version": "1.0",
+            "type": "docker",
+            "status": "running",
+            "restartPolicy": "always",
+            "settings": {
+              "image": "${MODULES.UpstreamFromStorages}",
+              "createOptions": {}
+            }
           }
         }
       }
@@ -133,13 +143,13 @@
     "$edgeHub": {
       "properties.desired": {
         "schemaVersion": "1.0",
-        "routes": {          
+        "routes": {
           "sensorTostoragefacade": "FROM /messages/modules/tempSensor/outputs/temperatureOutput INTO BrokeredEndpoint(\"/modules/storagefacade/inputs/inputfortempsensor\")",
-          "sensorToMachineLearning":"FROM /messages/modules/tempSensor/outputs/temperatureOutput INTO BrokeredEndpoint(\"/modules/anomalydetection/inputs/amlInput\")",
+          "sensorToMachineLearning": "FROM /messages/modules/tempSensor/outputs/temperatureOutput INTO BrokeredEndpoint(\"/modules/anomalydetection/inputs/amlInput\")",
           "fakemlToStoreMessagesToBlob": "FROM /messages/modules/tempSensor/outputs/*  INTO BrokeredEndpoint(\"/modules/storagefacade/inputs/inputforml\")",
           "telemetryToAsa": "FROM /messages/modules/tempSensor/outputs/temperatureOutput INTO BrokeredEndpoint(\"/modules/samodule/inputs/temperature\")",
           "alertsToReset": "FROM /messages/modules/samodule/outputs/alert INTO BrokeredEndpoint(\"/modules/tempSensor/inputs/control\")",
-          "UpstreamFromStoragesToIoTHub": "FROM /messages/modules/storagefacade/outputs/output1 INTO $upstream",
+          "UpstreamFromStoragesToIoTHub": "FROM /messages/modules/UpstreamFromStorages/outputs/* INTO $upstream",
           "telemetryToMongo": "FROM /messages/modules/tempSensorForMongo/outputs/temperatureOutput INTO BrokeredEndpoint(\"/modules/storagefacade/inputs/inputfortemp\")"
         },
         "storeAndForwardConfiguration": {
