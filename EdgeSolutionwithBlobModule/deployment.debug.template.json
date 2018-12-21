@@ -101,6 +101,16 @@
             "status": "running",
             "restartPolicy": "always",
             "version": "4.0"
+          },
+          "UpstreamFromStorages": {
+            "version": "1.0",
+            "type": "docker",
+            "status": "running",
+            "restartPolicy": "always",
+            "settings": {
+              "image": "${MODULES.UpstreamFromStorages.debug}",
+              "createOptions": {}
+            }
           }
         }
       }
@@ -113,7 +123,8 @@
           "sensorToazureBlobStorage": "FROM /messages/modules/tempSensor/outputs/temperatureOutput INTO BrokeredEndpoint(\"/modules/azureBlobStorage/inputs/input1\")",
           "StoreMessagesToBlobIoTHub": "FROM /messages/modules/StoreMessagesToBlob/outputs/* INTO $upstream",
           "UpstreamFromBlobToIoTHub": "FROM /messages/modules/UpstreamFromBlob/outputs/* INTO $upstream",
-          "anomalydetectionToIoTHub": "FROM /messages/modules/anomalydetection/outputs/* INTO $upstream"
+          "anomalydetectionToIoTHub": "FROM /messages/modules/anomalydetection/outputs/* INTO $upstream",
+          "UpstreamFromStoragesToIoTHub": "FROM /messages/modules/UpstreamFromStorages/outputs/* INTO $upstream"
         },
         "storeAndForwardConfiguration": {
           "timeToLiveSecs": 7200
