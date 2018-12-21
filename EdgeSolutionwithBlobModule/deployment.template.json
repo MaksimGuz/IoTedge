@@ -62,21 +62,21 @@
             "status": "running",
             "restartPolicy": "always"
           },
-          "storagefacade": {
-            "type": "docker",
-            "settings": {
-              "image": "${MODULES.StorageFacade}",
-              "createOptions": "{}"
-            },
-            "version": "1.0",
-            "status": "running",
-            "restartPolicy": "always"
-          },
           "mvconedge": {
             "type": "docker",
             "settings": {
               "image": "${MODULES.mvc}",
               "createOptions": "{\"HostConfig\":{\"PortBindings\":{\"80/tcp\":[{\"HostPort\":\"8080\"}]}}}"
+            },
+            "version": "1.0",
+            "status": "running",
+            "restartPolicy": "always"
+          },
+          "storagefacade": {
+            "type": "docker",
+            "settings": {
+              "image": "${MODULES.StorageFacadeWebAPI}",
+              "createOptions": "{\"HostConfig\":{\"PortBindings\":{\"80/tcp\":[{\"HostPort\":\"8090\"}]}}}"
             },
             "version": "1.0",
             "status": "running",
@@ -138,8 +138,7 @@
           "sensorToMachineLearning":"FROM /messages/modules/tempSensor/outputs/temperatureOutput INTO BrokeredEndpoint(\"/modules/anomalydetection/inputs/amlInput\")",
           "fakemlToStoreMessagesToBlob": "FROM /messages/modules/tempSensor/outputs/*  INTO BrokeredEndpoint(\"/modules/storagefacade/inputs/inputforml\")",
           "telemetryToAsa": "FROM /messages/modules/tempSensor/outputs/temperatureOutput INTO BrokeredEndpoint(\"/modules/samodule/inputs/temperature\")",
-          "alertsToReset": "FROM /messages/modules/samodule/outputs/alert INTO BrokeredEndpoint(\"/modules/tempSensor/inputs/control\")",
-          "UpstreamFromStoragesToIoTHub": "FROM /messages/modules/storagefacade/outputs/output1 INTO $upstream",
+          "alertsToReset": "FROM /messages/modules/samodule/outputs/alert INTO BrokeredEndpoint(\"/modules/tempSensor/inputs/control\")",          
           "telemetryToMongo": "FROM /messages/modules/tempSensorForMongo/outputs/temperatureOutput INTO BrokeredEndpoint(\"/modules/storagefacade/inputs/inputfortemp\")"
         },
         "storeAndForwardConfiguration": {
